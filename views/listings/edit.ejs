@@ -1,0 +1,67 @@
+<% layout('/layouts/boilerplate') %>
+<body class="bg-light py-5">
+    <div class="container">
+        <h1 class="mb-4 text-center">Edit Post</h1>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" class="bg-white p-5 rounded shadow-sm needs-validation" novalidate>
+
+            <!-- Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Title<span class="text-danger">*</span></label>
+                <input type="text" name="listing[title]" id="title" class="form-control" value="<%= listing.title %>" required>
+                <div class="valid-feedback">Title looks good!</div>
+                <div class="invalid-feedback">Please enter the title.</div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea name="listing[description]" id="description" class="form-control" rows="3"><%= listing.description %></textarea>
+            </div>
+
+            <!-- Price and Email in one row -->
+            <div class="row">
+                <div class="mb-3 col-md-6">
+                    <label for="price" class="form-label">Price<span class="text-danger">*</span></label>
+                    <input type="number" name="listing[price]" id="price" class="form-control" value="<%= listing.price %>" required>
+                    <div class="valid-feedback">Price looks valid!</div>
+                    <div class="invalid-feedback">Please enter the price.</div>
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label for="email" class="form-label">Email<span class="text-danger">*</span></label>
+                    <input type="email" name="listing[email]" id="email" class="form-control" value="<%= listing.email %>" required>
+                    <div class="valid-feedback">Email looks valid!</div>
+                    <div class="invalid-feedback">Please enter a valid email.</div>
+                </div>
+            </div>
+
+            <!-- Image URL -->
+            <div class="mb-3">
+                <label for="img" class="form-label">Image URL</label>
+                <input type="text" name="listing[image][url]" id="img" class="form-control" value="<%= listing.image.url %>">
+            </div>
+
+            <!-- Country and Location in one row -->
+            <div class="row mb-4">
+                <div class="mb-3 col-md-6">
+                    <label for="country" class="form-label">Country<span class="text-danger">*</span></label>
+                    <input type="text" name="listing[country]" id="country" class="form-control" value="<%= listing.country %>" required>
+                    <div class="valid-feedback">Country looks good!</div>
+                    <div class="invalid-feedback">Please enter the country.</div>
+                </div>
+
+                <div class="mb-3 col-md-6">
+                    <label for="location" class="form-label">Location<span class="text-danger">*</span></label>
+                    <input type="text" name="listing[location]" id="location" class="form-control" value="<%= listing.location %>" required>
+                    <div class="valid-feedback">Location looks good!</div>
+                    <div class="invalid-feedback">Please enter the location.</div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+                <button class="btn btn-success" type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+</body>

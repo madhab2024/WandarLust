@@ -1,0 +1,34 @@
+<% layout('/layouts/boilerplate') %>
+<body class="bg-light py-5 custom-show-body">
+    <div class="container">
+        <div class="card shadow show-card mb-5">
+            <div class="row g-0 flex-column flex-md-row">
+                <!-- Listing Image -->
+                <div class="col-md-6 show-img-container">
+                    <img src="<%= Listing.image.url %>" alt="Listing Image" class="img-fluid rounded-start show-img">
+                </div>
+
+                <!-- Listing Details -->
+                <div class="col-md-6 p-4">
+                    <h2 class="show-title mb-3"><%= Listing.title %></h2>
+                    <p class="text-muted"><%= Listing.description %></p>
+
+                    <ul class="list-group list-group-flush show-list">
+                        <li class="list-group-item"><strong>Price:</strong> ₹ <%= Listing.price.toLocaleString('en-IN') %></li>
+                        <li class="list-group-item"><strong>Location:</strong> <%= Listing.location %></li>
+                        <li class="list-group-item"><strong>Country:</strong> <%= Listing.country %></li>
+                        <li class="list-group-item"><strong>Email:</strong> <%= Listing.email %></li>
+                    </ul>
+
+                    <div class="mt-4 d-flex flex-wrap show-button-group">
+                        <a href="/listings/<%= Listing._id %>/edit" class="btn btn-outline-primary">Edit</a>
+                        <form method="POST" action="/listings/<%= Listing._id %>?_method=DELETE">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        <a href="/listings" class="btn btn-secondary">← Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

@@ -1,0 +1,184 @@
+body {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+/* Navbar */
+.navbar {
+  height: 5rem;
+  padding: 0 1rem;
+}
+
+/* Navbar brand spacing */
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fe424d;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* Compass icon */
+.fa-compass {
+  color: #fe424d;
+  font-size: 2rem;
+  margin-right: 0.5rem;
+}
+
+/* Nav link styling */
+.nav-link {
+  color: #333;
+  font-size: 1.1rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  margin-right: 1rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #fe424d;
+}
+
+/* Active link */
+.nav-link.active {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fe424d !important;
+}
+
+@media (max-width: 991px) {
+  .navbar {
+    height: auto;
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .navbar-toggler {
+    border: none;
+  }
+
+  .fa-compass {
+    font-size: 1.5rem;
+    margin-right: 0.25rem;
+  }
+
+  .nav-link {
+    font-size: 1rem;
+    margin-right: 0;
+    padding: 0.5rem 0;
+  }
+
+  .nav-link.active {
+    font-size: 1.1rem;
+  }
+
+  .navbar-collapse {
+    background-color: #f8f9fa; /* match bg-light for consistency */
+    padding: 0.5rem 1rem;
+  }
+}
+
+.card {
+  border: none !important;
+  margin-bottom: 2rem;
+}
+
+.card-img-top {
+  border-radius: 0.5rem !important;
+  object-fit: cover !important;
+}
+.card-body {
+  padding: 0 !important;
+}
+.card-title {
+  margin-top: 0.3rem;
+}
+.card-title a {
+  color: #333;
+  text-decoration: none !important;
+}
+
+/* footer */
+.footer-custom {
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-social .social-icon {
+    margin-right: 15px;
+    color: #333;
+    font-size: 1.25rem;
+    transition: color 0.2s ease;
+}
+
+.footer-social .social-icon:last-child {
+    margin-right: 0;
+}
+
+.footer-social .social-icon:hover {
+    color: #ff385c; /* Airbnb-style pink */
+}
+
+.footer-links .footer-link {
+    margin-left: 15px;
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-links .footer-link:first-child {
+    margin-left: 0;
+}
+
+.footer-links .footer-link:hover {
+    color: #ff385d;
+}
+
+/* edit page */
+
+.show-button-group > * {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+/* wandera-lust text */
+.gradient-text {
+  font-weight: bold;
+  background: linear-gradient(45deg, #ff385c, #ff9a00);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Our exxclusive list */
+.listing-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #ff385c; /* Airbnb pink vibe */
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
