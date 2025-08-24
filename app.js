@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 5050;
+const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
 const Listing = require('./models/listing');
@@ -8,6 +8,9 @@ const methodOverride = require('method-override');
 const WrapAsync = require('./utils/WrapAsync');
 const ExpressError = require('./utils/ExpressError');
 const engine = require('ejs-mate');
+const Review = require('./models/review');
+require('dotenv').config();
+
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/AirBnb";
 
@@ -20,6 +23,8 @@ main().then(() => {
 }).catch(() => {
     console.log("Connection Error");
 });
+
+
 
 // Middleware setup
 app.engine('ejs', engine);
@@ -35,16 +40,38 @@ app.get("/", (req, res) => {
 });
 
 // INDEX Route
+// Paginated INDEX Route
+// INDEX (paginated)
 app.get('/listings', WrapAsync(async (req, res) => {
-    const allListing = await Listing.find({});
-    res.render("./listings/listing.ejs", { allListing });
+  const page = parseInt(req.query.page) || 1;
+  const limit = 9;                       // 3 cards x 3 rows
+  const skip = (page - 1) * limit;
+
+  const [listings, total] = await Promise.all([
+    Listing.find({}).skip(skip).limit(limit),
+    Listing.countDocuments()
+  ]);
+
+  const hasMore = page * limit < total;
+
+  // AJAX → return JSON for infinite scroll
+  const isAjax = req.xhr || (req.headers['x-requested-with'] === 'XMLHttpRequest') ||
+                 (req.headers.accept && req.headers.accept.includes('application/json'));
+  if (isAjax) return res.json({ listings, hasMore });
+
+  // First load → SSR with EJS
+  res.render("./listings/listing.ejs", {
+    allListing: listings,   // keep your variable name
+    page,
+    hasMore
+  });
 }));
+
 
 // NEW form Route
 app.get('/listings/new', (req, res) => {
     res.render('./listings/new.ejs');
 });
-
 // SHOW Route
 app.get('/listings/:id', WrapAsync(async (req, res) => {
     let { id } = req.params;
@@ -101,6 +128,25 @@ app.delete('/listings/:id', WrapAsync(async (req, res) => {
     console.log("Deleted:", deletedItem);
     res.redirect('/listings');
 }));
+
+//adding review Model
+
+app.post('/listings/:id/reviews', WrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        return res.status(404).send("Listing not found");
+    }
+
+    let newReview = new Review(req.body.review);
+    listing.reviews.push(newReview);
+
+    await newReview.save();
+    await listing.save();
+
+    console.log("New review saved");
+    res.redirect(`/listings/${listing._id}`); // redirect instead of plain send
+}));
+
 
 // Catch-all for unknown routes
 app.all("*", (req, res, next) => {

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Review = require("./review")
 
 const listingSchema = new Schema({
   title: {
@@ -24,10 +25,24 @@ const listingSchema = new Schema({
     required: true,
   },
   email: {
-     type: String, 
-     required: true 
+     type: String,  
+     required: true,
     },
+  reviews: [
+    {
+        type: Schema.Types.ObjectId,
+        ref: "Review"
+    }
+]
+
 });
 
+//Middelware to delete review of listing
+listingSchema.post('findOneAndDelete', async function (doc) {
+  if (doc) {
+    await Review.deleteMany({ _id: { $in: doc.reviews } });
+    console.log(`Deleted reviews for listing ${doc._id}`);
+  }
+});
 const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing;
