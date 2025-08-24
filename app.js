@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
+const port= process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
 const Listing = require('./models/listing');
@@ -12,11 +12,11 @@ const Review = require('./models/review');
 require('dotenv').config();
 
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/AirBnb";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/AirBnb";
 
 // MongoDB connection
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 }
 main().then(() => {
     console.log("Connection Successful");
