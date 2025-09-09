@@ -100,7 +100,11 @@ body {
   color: #333;
   text-decoration: none !important;
 }
-
+.explore {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+}
 /* footer */
 .footer-custom {
     font-size: 0.9rem;
@@ -182,3 +186,29 @@ body {
   text-transform: uppercase;
   text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
 }
+
+.review-cards-wrapper {
+  gap: 1.5rem;            /* forces spacing between cards */
+}
+
+.review-card {
+  border-radius: 12px;    /* rounded corners */
+  flex: 1 1 300px;        /* makes them responsive */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.review-comment {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+.rating-stars span {
+  font-size: 1.2rem;
+}
+

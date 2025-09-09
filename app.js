@@ -3,16 +3,14 @@ const app = express();
 const port= process.env.PORT || 3000;
 const mongoose = require('mongoose');
 const path = require('path');
-const Listing = require('./models/listing');
+const Listing = require('./models/listings');
 const methodOverride = require('method-override');
 const WrapAsync = require('./utils/WrapAsync');
 const ExpressError = require('./utils/ExpressError');
 const engine = require('ejs-mate');
 const Review = require('./models/review');
+const review = require('./models/review');
 require('dotenv').config();
-
-
-// const MONGO_URL = "mongodb://127.0.0.1:27017/AirBnb";
 
 // MongoDB connection
 async function main() {
@@ -23,8 +21,6 @@ main().then(() => {
 }).catch(() => {
     console.log("Connection Error");
 });
-
-
 
 // Middleware setup
 app.engine('ejs', engine);
@@ -40,49 +36,27 @@ app.get("/", (req, res) => {
 });
 
 // INDEX Route
-// Paginated INDEX Route
-// INDEX (paginated)
 app.get('/listings', WrapAsync(async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = 9;                       // 3 cards x 3 rows
-  const skip = (page - 1) * limit;
-
-  const [listings, total] = await Promise.all([
-    Listing.find({}).skip(skip).limit(limit),
-    Listing.countDocuments()
-  ]);
-
-  const hasMore = page * limit < total;
-
-  // AJAX → return JSON for infinite scroll
-  const isAjax = req.xhr || (req.headers['x-requested-with'] === 'XMLHttpRequest') ||
-                 (req.headers.accept && req.headers.accept.includes('application/json'));
-  if (isAjax) return res.json({ listings, hasMore });
-
-  // First load → SSR with EJS
-  res.render("./listings/listing.ejs", {
-    allListing: listings,   // keep your variable name
-    page,
-    hasMore
-  });
+  const listings = await Listing.find({}).populate("reviews");
+  res.render("listings/listing.ejs", { allListing: listings });
 }));
-
 
 // NEW form Route
 app.get('/listings/new', (req, res) => {
     res.render('./listings/new.ejs');
 });
+
 // SHOW Route
 app.get('/listings/:id', WrapAsync(async (req, res) => {
     let { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("Invalid Listing ID");
+        return res.status(400).render("error.ejs", { err });
     }
-    const foundListing = await Listing.findById(id);
-    if (!foundListing) {
+    const listing = await Listing.findById(id).populate("reviews"); // populate reviews
+    if (!listing) {
         return res.status(404).send("Listing not found");
     }
-    res.render("./listings/show.ejs", { Listing: foundListing });
+    res.render("./listings/show.ejs", { listing }); // lowercase key
 }));
 
 // CREATE Route
@@ -129,24 +103,29 @@ app.delete('/listings/:id', WrapAsync(async (req, res) => {
     res.redirect('/listings');
 }));
 
-//adding review Model
-
+// Add review
 app.post('/listings/:id/reviews', WrapAsync(async (req, res) => {
-    let listing = await Listing.findById(req.params.id);
-    if (!listing) {
-        return res.status(404).send("Listing not found");
-    }
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) return res.status(404).send("Listing not found");
 
-    let newReview = new Review(req.body.review);
-    listing.reviews.push(newReview);
-
+    const newReview = new Review(req.body.review);
     await newReview.save();
+
+    listing.reviews.push(newReview._id); // push only the ObjectId
     await listing.save();
 
     console.log("New review saved");
-    res.redirect(`/listings/${listing._id}`); // redirect instead of plain send
+    res.redirect(`/listings/${listing._id}`);
 }));
 
+// Adding Delete Button in reviews card
+app.delete('/listings/:id/reviews/:reviewId', WrapAsync(async(req, res)=>{
+    let {id, reviewId} = req.params;
+    await Review.findByIdAndUpdate(id, {reviews: reviewId});
+    await Review.findByIdAndDelete(reviewId);
+    console.log("Review Deleted ", reviewId);
+    res.redirect(`/listings/${id}`)
+}));
 
 // Catch-all for unknown routes
 app.all("*", (req, res, next) => {
@@ -158,8 +137,6 @@ app.use((err, req, res, next) => {
     const { status = 500, message = "Something went wrong!" } = err;
     res.status(status).render("error.ejs", { err });
 });
-
-
 
 // Start server
 app.listen(port, () => {

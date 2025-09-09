@@ -1,99 +1,27 @@
 <% layout('/layouts/boilerplate') %>
+    <h3 class="listing-title">Our Exclusive Stays</h3>
 
-<h3 class="listing-title mb-4">Our Exclusive Stays</h3>
+    <!-- <form action="/listings/new">
+        <button>Create New Post</button>
+    </form> -->
 
 <div class="container">
-  <!-- grid -->
-  <div id="listing-grid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     <% for (let listing of allListing) { %>
       <div class="col">
-        <div class="card h-100" style="width: 18rem;">
-          <img src="<%= listing.image.url %>" class="card-img-top" alt="Image" style="height: 10rem; object-fit: cover;">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title mb-2">
+        <div class="card" style="width: 18rem;">
+          <img src="<%= listing.image.url %>" class="card-img-top" alt="Error loading image" style="height: 10rem; object-fit: cover;">
+          <div class="card-body">
+            <h5 class="card-title">
               <a href="/listings/<%= listing._id %>"><%= listing.title %></a>
             </h5>
-            <p class="card-text flex-grow-1"><%= listing.description %></p>
-            <a href="/listings/<%= listing._id %>" class="btn btn-primary mt-auto">Explore</a>
+            <p class="card-text"><%= listing.description %></p>
+            <a href="/listings/<%= listing._id %>" class="explore btn btn-primary">Explore</a>
           </div>
         </div>
       </div>
     <% } %>
   </div>
-
-  <!-- sentinel + loader (Bootstrap) -->
-  <div id="sentinel" class="py-4 text-center">
-    <div id="loader" class="spinner-border" role="status" aria-hidden="true" style="<%= hasMore ? '' : 'display:none' %>"></div>
-    <% if (!hasMore) { %>
-      <p class="text-muted mb-0">No more listings.</p>
-    <% } %>
-  </div>
 </div>
 
-<script>
-  // start from next page
-  let page = (<%= page %> || 1) + 1;
-  let loading = false;
-  let hasMore = <%= hasMore ? 'true' : 'false' %>;
-
-  async function loadMore() {
-    if (loading || !hasMore) return;
-    loading = true;
-
-    const loader = document.getElementById('loader');
-    if (loader) loader.style.display = 'inline-block';
-
-    try {
-      const res = await fetch(`/listings?page=${page}`, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Accept': 'application/json'
-        }
-      });
-      const data = await res.json(); // { listings, hasMore }
-
-      appendCards(data.listings || []);
-
-      hasMore = !!data.hasMore;
-      if (hasMore) {
-        page++;
-        if (loader) loader.style.display = 'inline-block';
-      } else {
-        if (loader) loader.outerHTML = '<p class="text-muted mb-0">No more listings.</p>';
-        observer.disconnect();
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      loading = false;
-    }
-  }
-
-  function appendCards(listings) {
-    const grid = document.getElementById('listing-grid');
-    listings.forEach(l => {
-      const col = document.createElement('div');
-      col.className = 'col';
-      col.innerHTML = `
-        <div class="card h-100" style="width: 18rem;">
-          <img src="${l.image?.url || '/images/placeholder.jpg'}" class="card-img-top" alt="Image" style="height: 10rem; object-fit: cover;">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title mb-2">
-              <a href="/listings/${l._id}">${l.title ?? 'Listing'}</a>
-            </h5>
-            <p class="card-text flex-grow-1">${l.description ?? ''}</p>
-            <a href="/listings/${l._id}" class="btn btn-primary mt-auto">Explore</a>
-          </div>
-        </div>`;
-      grid.appendChild(col);
-    });
-  }
-
-  // IntersectionObserver for smooth infinite scroll
-  const sentinel = document.getElementById('sentinel');
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) loadMore();
-  }, { rootMargin: '200px' });
-
-  if (hasMore) observer.observe(sentinel);
-</script>
+</div>
