@@ -212,3 +212,57 @@ body {
 .rating-stars span {
   font-size: 1.2rem;
 }
+/* for star in review page */
+/* Star Rating */
+.custom-star-rating {
+  display: flex;
+  flex-direction: row-reverse; /* so stars fill from left to right */
+  justify-content: flex-start;
+  gap: 5px;
+}
+
+.custom-star-rating input {
+  display: none; /* hide radio buttons */
+}
+
+.custom-star-rating label {
+  font-size: 1.8rem;
+  color: #ddd; /* default grey */
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.custom-star-rating label::before {
+  content: '★';
+}
+
+.custom-star-rating input:checked ~ label,
+.custom-star-rating label:hover,
+.custom-star-rating label:hover ~ label {
+  color: #ffc107; /* yellow star */
+  transform: scale(1.2);
+}
+
+/* Smooth animation when selecting */
+.custom-star-rating label {
+  animation: starFade 0.3s ease;
+}
+
+@keyframes starFade {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Optional: smaller stars on mobile */
+@media (max-width: 768px) {
+  .custom-star-rating label {
+    font-size: 1.5rem;
+  }
+}
