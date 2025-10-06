@@ -1,50 +1,14 @@
 <% layout('/layouts/boilerplate') %>
-<style>
-  .custom-star-rating {
-    direction: rtl;
-    display: flex;
-    justify-content: flex-start;
-    gap: 8px;
-  }
 
-  .custom-star-rating input[type="radio"] {
-    display: none;
-  }
-
-  .custom-star-rating label {
-    width: 40px;
-    height: 40px;
-    background: #ccc;
-    clip-path: polygon(
-      50% 0%,
-      61% 35%,
-      98% 35%,
-      68% 57%,
-      79% 91%,
-      50% 70%,
-      21% 91%,
-      32% 57%,
-      2% 35%,
-      39% 35%
-    );
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-
-  .custom-star-rating label:hover,
-  .custom-star-rating label:hover ~ label {
-    background: #ffc107;
-  }
-
-  .custom-star-rating input[type="radio"]:checked ~ label {
-    background: #ffc107;
-  }
-</style>
+<style></style>
 
 <body class="bg-light py-5 custom-show-body">
   <div class="container">
+
+    <!-- Listing Card -->
     <div class="card shadow show-card mb-5">
       <div class="row g-0 flex-column flex-md-row">
+
         <!-- Listing Image -->
         <div class="col-md-6 show-img-container">
           <img
@@ -57,12 +21,12 @@
         <!-- Listing Details -->
         <div class="col-md-6 p-4">
           <h2 class="show-title mb-3"><%= listing.title %></h2>
+          <p class="show-title mb-3">Owned By: <%= listing.owner.username %></p>
           <p class="text-muted"><%= listing.description %></p>
 
           <ul class="list-group list-group-flush show-list">
             <li class="list-group-item">
-              <strong>Price:</strong> ₹ <%=
-              listing.price.toLocaleString('en-IN') %>
+              <strong>Price:</strong> ₹ <%= listing.price.toLocaleString('en-IN') %>
             </li>
             <li class="list-group-item">
               <strong>Location:</strong> <%= listing.location %>
@@ -75,122 +39,123 @@
             </li>
           </ul>
 
+          <!-- Buttons -->
           <div class="mt-4 d-flex flex-wrap show-button-group">
-            <a
-              href="/listings/<%= listing._id %>/edit"
-              class="btn btn-outline-primary"
-              >Edit</a
-            >
-            <form
-              method="POST"
-              action="/listings/<%= listing._id %>?_method=DELETE"
-            >
-              <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
+            <% if (currUser && currUser._id.equals(listing.owner._id)) { %>
+              <a href="/listings/<%= listing._id %>/edit" class="btn btn-outline-primary me-2">Edit</a>
+              <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="me-2">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            <% } %>
             <a href="/listings" class="btn btn-secondary">← Back</a>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="card shadow show-card mb-5">
-      <h3 class="p-3 text-primary bg-light rounded">Leave a Review</h3>
-      <form
-        action="/listings/<%= listing._id %>/reviews"
-        method="POST"
-        class="bg-white p-4 rounded shadow needs-validation"
-        novalidate
-      >
-        <div class="mb-3">
-          <label for="comment" class="form-label">Comment</label>
-          <textarea
-            class="form-control"
-            id="comment"
-            name="review[comment]"
-            rows="4"
-            required
-          ></textarea>
-          <div class="invalid-feedback">Please enter your comment.</div>
-        </div>
+    <!-- Review Form -->
+    <% if (currUser) { %>
+      <div class="card shadow show-card mb-5">
+        <h3 class="p-3 text-primary bg-light rounded">Leave a Review</h3>
 
-        <div class="mb-4">
-          <label class="form-label d-block mb-2">Rating</label>
-          <div class="custom-star-rating">
-            <input
-              type="radio"
-              id="star5"
-              name="review[rating]"
-              value="5"
+        <form
+          action="/listings/<%= listing._id %>/reviews"
+          method="POST"
+          class="bg-white p-4 rounded shadow needs-validation"
+          novalidate
+        >
+          <div class="mb-3">
+            <label for="comment" class="form-label">Comment</label>
+            <textarea
+              class="form-control"
+              id="comment"
+              name="review[comment]"
+              rows="4"
               required
-            /><label for="star5" title="5 stars"></label>
-            <input
-              type="radio"
-              id="star4"
-              name="review[rating]"
-              value="4"
-            /><label for="star4" title="4 stars"></label>
-            <input
-              type="radio"
-              id="star3"
-              name="review[rating]"
-              value="3"
-            /><label for="star3" title="3 stars"></label>
-            <input
-              type="radio"
-              id="star2"
-              name="review[rating]"
-              value="2"
-            /><label for="star2" title="2 stars"></label>
-            <input
-              type="radio"
-              id="star1"
-              name="review[rating]"
-              value="1"
-            /><label for="star1" title="1 star"></label>
+            ></textarea>
+            <div class="invalid-feedback">Please enter your comment.</div>
           </div>
-          <div class="invalid-feedback">Please select a rating.</div>
-        </div>
 
-        <button type="submit" class="btn btn-warning px-4 fw-bold">
-          Submit Review
-        </button>
-      </form>
-    </div>
+          <div class="mb-4">
+            <label class="form-label d-block mb-2">Rating</label>
+            <div class="custom-star-rating">
+              <input type="radio" id="star5" name="review[rating]" value="5" required />
+              <label for="star5" title="5 stars"></label>
 
+              <input type="radio" id="star4" name="review[rating]" value="4" />
+              <label for="star4" title="4 stars"></label>
+
+              <input type="radio" id="star3" name="review[rating]" value="3" />
+              <label for="star3" title="3 stars"></label>
+
+              <input type="radio" id="star2" name="review[rating]" value="2" />
+              <label for="star2" title="2 stars"></label>
+
+              <input type="radio" id="star1" name="review[rating]" value="1" />
+              <label for="star1" title="1 star"></label>
+            </div>
+            <div class="invalid-feedback">Please select a rating.</div>
+          </div>
+
+          <button type="submit" class="btn btn-warning px-4 fw-bold">Submit Review</button>
+        </form>
+      </div>
+    <% } else { %>
+      <p class="show-title mb-3">Please login to add reviews!</p>
+    <% } %>
+
+    <!-- Reviews Section -->
     <div class="reviews-section mt-5">
       <h4 class="mb-4 text-primary fw-bold">Reviews</h4>
+
       <div class="d-flex flex-wrap justify-content-start review-cards-wrapper">
-        <% if (listing.reviews.length > 0) { %> <% for (let review of
-        listing.reviews) { %>
-        <div class="review-card card shadow-sm border-0 p-3">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-2">
-              <div class="rating-stars me-2">
-                <% for (let i = 1; i <= 5; i++) { %> <% if (i <= review.rating)
-                { %>
-                <span class="text-warning">★</span>
-                <% } else { %>
-                <span class="text-muted">☆</span>
-                <% } %> <% } %>
+        <% if (listing.reviews.length > 0) { %>
+          <% for (let review of listing.reviews) { %>
+            <div class="review-card card shadow-sm border-0 p-3 mb-3">
+              <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap">
+                  <div>
+                    <p class="mb-1 fw-semibold" style="font-weight: 500;">
+                      <%= review.author.username %>
+                    </p>
+                    <div class="rating-stars">
+                      <% for (let i = 1; i <= 5; i++) { %>
+                        <% if (i <= review.rating) { %>
+                          <span class="text-warning">★</span>
+                        <% } else { %>
+                          <span class="text-muted">☆</span>
+                        <% } %>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <!-- Date -->
+                  <small class="text-muted mt-1">
+                    <%= review.createdAt.toDateString() %>
+                  </small>
+                </div>
+
+                <!-- Review comment -->
+                <p class="review-comment mb-0"><%= review.comment %></p>
               </div>
-              <small class="text-muted"
-                ><%= review.createdAt.toDateString() %></small
-              >
+
+              <!-- Delete Button -->
+              <% if (currUser && review.author && currUser._id.equals(review.author._id)) { %>
+                <form
+                  action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                  method="POST"
+                  class="mt-3"
+                >
+                  <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              <% } %>
             </div>
-            <p class="review-comment mb-0"><%= review.comment %></p>
+          <% } %>
+        <% } else { %>
+          <div class="alert alert-info w-100">
+            No reviews yet. Be the first to leave one!
           </div>
-          <form
-            action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
-            method="POST"
-            class="mt-2"
-          >
-            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-          </form>
-        </div>
-        <% } %> <% } else { %>
-        <div class="alert alert-info w-100">
-          No reviews yet. Be the first to leave one!
-        </div>
         <% } %>
       </div>
     </div>

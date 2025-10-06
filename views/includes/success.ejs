@@ -1,0 +1,28 @@
+<style>
+    .frame {
+  position: relative;
+  width: 504px;
+  height: 305px;
+  background-color: #ffffff;
+  border-radius: 12.78px;
+  overflow: hidden;
+}
+
+.frame .div {
+  position: absolute;
+  top: 32px;
+  left: calc(50.00% - 50px);
+}
+</style>
+
+<% if (success && success.length) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Success!</strong>
+    <% success.forEach(function(msg) { %>
+      <div><%= msg %></div>
+    <% }); %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+<% } %>
